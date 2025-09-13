@@ -8,10 +8,10 @@ Infrastructure pédagogique multi‑machines pour illustrer :
 ## Boxes Cloud publiées
 Version initiale : `0.1.0`
 
-| Rôle | Box | Provider | Architecture | Contenu principal |
-|------|-----|----------|--------------|------------------|
-| Web  | `S0_Brief_Projet_VirtualBox_Vagrant/ubuntu-web-server` | virtualbox | amd64 | Ubuntu 22.04 + Nginx + docroot `/var/www/html` |
-| DB   | `S0_Brief_Projet_VirtualBox_Vagrant/centos-mysql-db`   | virtualbox | amd64 | CentOS 9 Stream + MySQL 8 (`demo_db.users`) |
+| Rôle | Box | Provider | Architecture | Contenu principal | Lien |
+|------|-----|----------|--------------|------------------|------|
+| Web  | `S0_Brief_Projet_VirtualBox_Vagrant/ubuntu-web-server` | virtualbox | amd64 | Ubuntu 22.04 + Nginx + docroot `/var/www/html` | [Vagrant Cloud](https://portal.cloud.hashicorp.com/vagrant/discover/S0_Brief_Projet_VirtualBox_Vagrant/ubuntu-web-server) |
+| DB   | `S0_Brief_Projet_VirtualBox_Vagrant/centos-mysql-db`   | virtualbox | amd64 | CentOS 9 Stream + MySQL 8 (`demo_db.users`) | [Vagrant Cloud](https://portal.cloud.hashicorp.com/vagrant/discover/S0_Brief_Projet_VirtualBox_Vagrant/centos-mysql-db) |
 
 Pour consommer directement (sans cloner ce repo) :
 ```ruby
