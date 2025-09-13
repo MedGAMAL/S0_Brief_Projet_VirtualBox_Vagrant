@@ -3,14 +3,14 @@ set -euo pipefail
 
 DOC_ROOT="/var/www/html"
 
-echo "[WEB] Provision (ultra simplifié)"
+echo "[WEB] Provision"
 
 sudo apt-get update -y
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nginx git mysql-client-core-8.0
 
 sudo chown -R www-data:www-data "$DOC_ROOT" || true
 
-# Minimal Nginx (use default site but point root if needed)
+# Nginx 
 DEFAULT_SITE="/etc/nginx/sites-available/default"
 if grep -q "root /var/www/html" "$DEFAULT_SITE"; then
   : # already fine

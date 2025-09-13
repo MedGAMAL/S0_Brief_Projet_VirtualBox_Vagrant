@@ -11,7 +11,7 @@ sudo dnf install -y mysql-server || sudo dnf install -y mysql-community-server
 sudo systemctl enable mysqld
 sudo systemctl start mysqld
 
-# Open firewall for MySQL if firewalld is running (dev convenience)
+# Open firewall for MySQL if firewalld is running
 if systemctl is-active --quiet firewalld 2>/dev/null; then
   echo "[DB] Opening port 3306/tcp in firewalld"
   sudo firewall-cmd --permanent --add-service=mysql || true
