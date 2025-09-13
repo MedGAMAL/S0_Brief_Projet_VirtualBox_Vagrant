@@ -1,0 +1,25 @@
+# Vagrant & VM artifacts
+.vagrant/
+*.box
+
+# Logs / tmp
+*.log
+log/
+logs/
+.tmp/
+*.tmp
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Node (in case front-end added later)
+node_modules/
+
+# Editor swap files
+*~
+*.swp
+
+# Python caches (if scripts extended)
+__pycache__/
+*.pyc
