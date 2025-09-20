@@ -23,6 +23,7 @@ Vagrant.configure('2') do |config|
     db.vm.hostname = 'db-server'
     db.vm.network 'private_network', ip: DB_IP
     db.vm.network 'forwarded_port', guest: 3306, host: DB_HOST_PORT, auto_correct: true
+    db.vm.synced_folder '.', '/vagrant', create: true
     db.vm.provision 'shell', path: 'scripts/provision-db-centos.sh'
     db.vm.provider 'virtualbox' do |vb|
       vb.memory = 1024

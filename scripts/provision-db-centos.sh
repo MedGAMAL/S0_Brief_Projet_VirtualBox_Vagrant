@@ -30,20 +30,38 @@ fi
 sudo systemctl restart mysqld
 
 # Set root password on first run
-mysql -u root -e 'SELECT 1' >/dev/null 2>&1 || {
-  TEMP_PASS=$(sudo grep 'temporary password' /var/log/mysqld.log | awk '{print $NF}' | tail -1)
-  mysql --connect-expired-password -u root -p"$TEMP_PASS" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$ROOT_PASSWORD';"
+if mysql -u root -e 'SELECT 1' >/dev/null 2>&1; then
+  echo "[DB] Root has no password, setting password..."
+  mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$ROOT_PASSWORD';"
   mysql -u root -p"$ROOT_PASSWORD" -e "UNINSTALL COMPONENT 'file://component_validate_password';" || true
-}
+else
+  # Check if temporary password exists
+  if sudo test -f /var/log/mysqld.log && sudo grep -q 'temporary password' /var/log/mysqld.log; then
+    echo "[DB] Using temporary password..."
+    TEMP_PASS=$(sudo grep 'temporary password' /var/log/mysqld.log | awk '{print $NF}' | tail -1)
+    mysql --connect-expired-password -u root -p"$TEMP_PASS" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$ROOT_PASSWORD';"
+    mysql -u root -p"$ROOT_PASSWORD" -e "UNINSTALL COMPONENT 'file://component_validate_password';" || true
+  else
+    echo "[DB] Password already set or cannot determine temporary password"
+  fi
+fi
 
+# Create database and run setup scripts
 mysql -u root -p"$ROOT_PASSWORD" <<SQL
 CREATE DATABASE IF NOT EXISTS demo_db;
 USE demo_db;
 SQL
 
-mysql -u root -p"$ROOT_PASSWORD" < /vagrant/database/create-table.sql || true
-mysql -u root -p"$ROOT_PASSWORD" < /vagrant/database/insert-demo-data.sql || true
+mysql -u root -p"$ROOT_PASSWORD" demo_db < /vagrant/database/create-table.sql || true
+mysql -u root -p"$ROOT_PASSWORD" demo_db < /vagrant/database/insert-demo-data.sql || true
 
-mysql -u root -p"$ROOT_PASSWORD" -e "CREATE USER IF NOT EXISTS '$DEV_USER'@'%' IDENTIFIED BY '$DEV_PASS'; GRANT ALL PRIVILEGES ON demo_db.* TO '$DEV_USER'@'%'; FLUSH PRIVILEGES;"
+# Create development users for both local and remote access
+mysql -u root -p"$ROOT_PASSWORD" <<SQL
+CREATE USER IF NOT EXISTS '$DEV_USER'@'localhost' IDENTIFIED BY '$DEV_PASS';
+CREATE USER IF NOT EXISTS '$DEV_USER'@'%' IDENTIFIED BY '$DEV_PASS';
+GRANT ALL PRIVILEGES ON demo_db.* TO '$DEV_USER'@'localhost';
+GRANT ALL PRIVILEGES ON demo_db.* TO '$DEV_USER'@'%';
+FLUSH PRIVILEGES;
+SQL
 
 echo "[DB] Done"
